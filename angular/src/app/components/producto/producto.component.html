@@ -1,0 +1,88 @@
+<div class="container">
+  <div class="row mt-5">
+    <div class="col-12 d-flex">
+      <h1 class="mr-auto">Listado de productos</h1>
+      <h3 class="ml-auto">Maycol Zambrano Nuñez</h3>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col-8">
+      <mat-form-field appearance="outline">
+        <mat-label>Búscar en la tabla</mat-label>
+        <!-- <input matInput (keyup)="buscarProductos($event)" placeholder="Ingrese una descripción del producto"> -->
+        <input matInput placeholder="Ingrese una descripción del producto" #input>
+        <mat-icon matSuffix aria-hidden="false" fontIcon="search"></mat-icon>
+      </mat-form-field>
+    </div>
+    <div class="col-4">
+      <button mat-raised-button color="primary" class="py-3 w-100">Agregar producto</button>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <div class="col-12">
+
+      <div class="mat-elevation-z8">
+        <mat-table [dataSource]="dataSource" matSort>
+          <ng-container matColumnDef="index">
+            <mat-header-cell *matHeaderCellDef> Item </mat-header-cell>
+            <mat-cell *matCellDef="let row; let i = index;">{{i+1}}</mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </mat-header-cell>
+            <mat-cell *matCellDef="let row">{{row.name}}</mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="category">
+            <mat-header-cell *matHeaderCellDef mat-sort-header="category.name"> Categoria </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.category.name}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="brand">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Marca </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.brand.name}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="slug">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> URL </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.slug}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="createdAt">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Fecha </mat-header-cell>
+            <mat-cell *matCellDef="let row"> {{row.createdAt | date:'short'}} </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef mat-sort-header> Estado </mat-header-cell>
+            <mat-cell *matCellDef="let row">
+              <span
+                class="badge"
+                [class.badge-success]="row.status === true"
+                [class.badge-warning]="row.status === false"
+              >
+                <ng-container *ngIf="row.status === true">Habilitado</ng-container>
+                <ng-container *ngIf="row.status === false">Desabilitado</ng-container>
+              </span>
+            </mat-cell>
+          </ng-container>
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef class="justify-content-center"> Acciones </mat-header-cell>
+            <mat-cell *matCellDef="let row" class="justify-content-center">
+              <button mat-icon-button color="secondary" aria-label="Eliminar">
+                <mat-icon aria-hidden="false" fontIcon="delete"></mat-icon>
+              </button>
+              <button mat-icon-button color="primary" aria-label="Editar">
+                <mat-icon aria-hidden="false" fontIcon="edit"></mat-icon>
+              </button>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;">
+          </mat-row>
+        </mat-table>
+
+        <mat-paginator
+          [pageSizeOptions]="[5, 10, 25, 100]"
+          showFirstLastButtons
+        ></mat-paginator>
+      </div>
+
+    </div>
+  </div>
+</div>
