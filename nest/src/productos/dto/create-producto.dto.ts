@@ -1,4 +1,4 @@
-import { IsDate, IsNotEmpty, IsString } from "class-validator";
+import { IsBoolean, IsDate, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class CreateProductoDto {
 
@@ -6,9 +6,15 @@ export class CreateProductoDto {
     @IsNotEmpty()
     name: string;
 
-    // @IsString()
-    // @IsNotEmpty()
-    // category: string;
+    @IsString()
+    @IsNotEmpty()
+    @IsOptional()
+    category: string;
+
+    @IsString()
+    @IsNotEmpty()
+    @IsOptional()
+    brand: string;
 
     @IsString()
     @IsNotEmpty()
@@ -17,4 +23,9 @@ export class CreateProductoDto {
     // @IsDate()
     // @IsNotEmpty()
     createdAt: Date;
+
+    @IsBoolean()
+    @IsNotEmpty()
+    @IsOptional()
+    status: Boolean;
 }

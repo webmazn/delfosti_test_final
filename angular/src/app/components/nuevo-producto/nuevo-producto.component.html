@@ -1,0 +1,105 @@
+<div class="container">
+  <div class="row mt-5">
+    <div class="col-12 d-flex">
+      <h1 class="mr-auto">
+        <ng-container *ngIf="producto">
+          {{ id ? "Editar" : "Nuevo" }} producto
+        </ng-container>
+        <small class="d-block h5" *ngIf="id else defaultTemplate">Fecha de registro: {{ fechaRegistro | date:'short' }}</small>
+        <ng-template #defaultTemplate>
+          <small class="d-block h5">By: Maycol Zambrano Nuñez</small>
+        </ng-template>
+      </h1>
+      <div class="pt-2">
+        <button mat-raised-button color="secondary" routerLink="/listado-productos">
+          <mat-icon>arrow_back</mat-icon> Regresar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <mat-divider class="my-3"></mat-divider>
+  <!-- TODO cargar el fomrulario hata que se aya construido un producto -->
+  <form [formGroup]="formGroup" (ngSubmit)="save()" *ngIf="producto">
+    <div class="row">
+      <div class="col-4">
+        <mat-form-field appearance="outline">
+          <mat-label>ID Autogenerado</mat-label>
+          <input matInput placeholder="" disabled [value]="id">
+        </mat-form-field>
+      </div>
+      <div class="col-6">
+        <mat-form-field appearance="outline">
+          <mat-label>Nombre o descripción del producto</mat-label>
+          <input type="text" matInput placeholder="Ingrese un nombre o descripción para el producto" name="nombre" formControlName="nombre">
+        </mat-form-field>
+      </div>
+      <div class="col-2">
+        <mat-form-field appearance="outline">
+          <mat-label>Estado</mat-label>
+          <input type="text"
+                placeholder="Estado"
+                aria-label="Marcas"
+                matInput
+                name="estado"
+                formControlName="estado"
+                [matAutocomplete]="autoEstado">
+          <mat-autocomplete autoActiveFirstOption #autoEstado="matAutocomplete" [displayWith]="displayFn">
+            <mat-option *ngFor="let option of filteredOptionsEstado | async" [value]="option">{{option.name}}</mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+      <div class="col-3">
+        <mat-form-field appearance="outline">
+          <mat-label>Categoría</mat-label>
+          <input type="text"
+                placeholder="Escriba una categoría"
+                aria-label="Categorías"
+                matInput
+                name="categoria"
+                formControlName="categoria"
+                [matAutocomplete]="autoCategoria">
+          <mat-autocomplete autoActiveFirstOption #autoCategoria="matAutocomplete" [displayWith]="displayFn">
+            <mat-option *ngFor="let option of filteredOptionsCategoria | async" [value]="option">{{option.name}}</mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+      <div class="col-3">
+        <mat-form-field appearance="outline">
+          <mat-label>Marca</mat-label>
+          <input type="text"
+                placeholder="Escriba una marca"
+                aria-label="Marcas"
+                matInput
+                name="marca"
+                formControlName="marca"
+                [matAutocomplete]="autoMarca">
+          <mat-autocomplete autoActiveFirstOption #autoMarca="matAutocomplete" [displayWith]="displayFn">
+            <mat-option *ngFor="let option of filteredOptionsMarca | async" [value]="option">{{option.name}}</mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+      <div class="col-6">
+        <mat-form-field appearance="outline">
+          <mat-label>URL - Slug</mat-label>
+          <input type="url" matInput placeholder="Ingrese la URL del producto" name="url" formControlName="url">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <mat-divider class="my-3"></mat-divider>
+
+    <div class="row mt-5">
+      <div class="ml-auto">
+        <button mat-raised-button color="secondary" routerLink="/listado-productos" class="mr-3">
+          <mat-icon>close</mat-icon> Cancelar
+        </button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="formGroup.invalid">
+          <mat-icon>save</mat-icon> Guardar
+        </button>
+      </div>
+    </div>
+  </form>
+
+
+</div>

@@ -1,0 +1,8 @@
+<h4 mat-dialog-title>Eliminación de producto</h4>
+<div mat-dialog-content class="py-3">
+  ¿Desea eliminar el producto?
+</div>
+<div mat-dialog-actions class="d-flex justify-content-center">
+    <button mat-button (click)="onNoClick()" class="mr-3">No</button>
+    <button mat-button (click)="eliminarProducto()" cdkFocusInitial>Sí, eliminar</button>
+</div>

@@ -6,20 +6,20 @@ import { debounceTime, distinctUntilChanged, map, startWith } from 'rxjs/operato
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import { ProductosService } from '../../services/productos.service';
 import { CategoriasService } from '../../services/categorias.service';
 import { MarcasService } from '../../services/marcas.service';
 import { Producto } from '../../models/producto.model';
-import { Categoria } from '../../models/categoria.model';
-import { Marca } from '../../models/marca.model';
-
+import { EliminaProductoComponent } from '../elimina-producto/elimina-producto.component';
 
 @Component({
   selector: 'app-producto',
   templateUrl: './producto.component.html',
   styleUrls: ['./producto.component.scss']
 })
+
 export class ProductoComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -41,11 +41,17 @@ export class ProductoComponent implements OnInit {
   constructor(
     private productosService: ProductosService,
     private categoriaService: CategoriasService,
-    private marcaService: MarcasService
+    private marcaService: MarcasService,
+    public dialog: MatDialog,
   ) { }
 
   ngOnInit(): void {
-    this.productosSuscritos = this.productosService.listar().subscribe(
+    this.listarProductos();
+    this.llenarControles();
+  }
+
+  listarProductos(){
+    this.productosSuscritos = this.productosService.listarProductos().subscribe(
       (res: Producto) => {
         console.log(res);
         this.productos = res;
@@ -53,17 +59,10 @@ export class ProductoComponent implements OnInit {
       },err => console.error(err)
     );
     this.unsubscribe.push(this.productosSuscritos);
-
-    this.llenarControles();
   }
 
-  // buscarProductos(event: any) {
-  //   let filterValue = event.target.value;
-  //   filterValue = filterValue.trim().toLowerCase();
-  //   this.dataSource.filter = filterValue;
-  // }
-
   ngAfterViewInit() {
+    // TODO Filtrando ordenamiento en objeto anidado
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor = (row: Producto, columnName: string) : string => {
       //console.log(row,columnName);
@@ -73,39 +72,59 @@ export class ProductoComponent implements OnInit {
       return columnValue;
     }
     this.dataSource.sort = this.sort;
-
+    // TODO Filtrando dentro de objeto aninado
+    this.dataSource.filterPredicate = (data, filter: string)  => {
+      const accumulator = (currentTerm, key) => {
+        // return key === 'category' ? currentTerm + data.category.name : currentTerm + data[key];
+        if(key=="category") return currentTerm + data.category.name;
+        if(key=="brand") return currentTerm + data.brand.name;
+        return currentTerm + data[key];
+      };
+      const dataStr = Object.keys(data).reduce(accumulator, '').toLowerCase();
+      const transformedFilter = filter.trim().toLowerCase();
+      return dataStr.indexOf(transformedFilter) !== -1;
+    };
+    // TODO filtrar en todos los campos
     fromEvent(this.input.nativeElement,'keyup')
     .pipe(
       debounceTime(500),
       distinctUntilChanged())
-      .subscribe((palabra: any) => {
-        let filterValue = palabra.target.value;
-        filterValue = filterValue.trim().toLowerCase();
-        this.dataSource.filter = filterValue;
-      });
+    .subscribe((palabra: any) => {
+      let filterValue = palabra.target.value;
+      filterValue = filterValue.trim().toLowerCase();
+      this.dataSource.filter = filterValue;
+    });
   }
 
   llenarControles(){
-    const categorias = this.categoriaService.listar()
-      .subscribe((v) => { this.optionsCategoria = v
+    const categorias = this.categoriaService.listarCategorias()
+      .subscribe((v) => {
+        this.optionsCategoria = v
         this.filteredOptionsCategoria = this.categoria.valueChanges.pipe(
+          debounceTime(500),
+          distinctUntilChanged(),
           startWith(''),
           map(value => typeof value === 'string' ? value : (<any>value).name),
           map(value => {
             const filterValue = value.toLowerCase();
+            this.dataSource.filter = filterValue;
             return this.optionsCategoria.filter(option => option.name.toLowerCase().includes(filterValue));
           })
         );
       })
     this.unsubscribe.push(categorias);
 
-    const marcas = this.marcaService.listar()
-      .subscribe((v) => { this.optionsMarca = v
+    const marcas = this.marcaService.listarMarcas()
+      .subscribe((v) => {
+        this.optionsMarca = v
         this.filteredOptionsMarca = this.marca.valueChanges.pipe(
+          debounceTime(500),
+          distinctUntilChanged(),
           startWith(''),
           map(value => typeof value === 'string' ? value : (<any>value).name),
           map(value => {
             const filterValue = value.toLowerCase();
+            this.dataSource.filter = filterValue;
             return this.optionsMarca.filter(option => option.name.toLowerCase().includes(filterValue));
           })
         );
@@ -117,9 +136,21 @@ export class ProductoComponent implements OnInit {
     return option ? option.name : undefined;
   }
 
+  confirmarEliminacion(id): void {
+    console.log(id);
+    const dialogRef = this.dialog.open(EliminaProductoComponent, {
+      // width: '250px'
+      data: {id: id},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // console.log(`Dialog result: ${result}`);
+      this.listarProductos();
+    });
+  }
+
   ngOnDestroy(){
     this.productosSuscritos.unsubscribe();
     this.unsubscribe.forEach(sb => sb.unsubscribe());
   }
-
 }

@@ -2,11 +2,11 @@
   <div class="row mt-5">
     <div class="col-12 d-flex">
       <h1 class="mr-auto">
-        Listado de productos
-        <small class="d-block h5">Maycol Zambrano Nuñez</small>
+        Gestión de productos
+        <small class="d-block h5">By: Maycol Zambrano Nuñez</small>
       </h1>
       <div class="pt-2">
-        <button mat-raised-button color="primary">
+        <button mat-raised-button color="primary" routerLink="/nuevo-producto">
           <mat-icon>add</mat-icon> Agregar producto
         </button>
       </div>
@@ -19,7 +19,6 @@
     <div class="col-12">
       <mat-form-field appearance="outline">
         <mat-label>Búscar en la tabla</mat-label>
-        <!-- <input matInput (keyup)="buscarProductos($event)" placeholder="Ingrese una descripción del producto"> -->
         <input matInput placeholder="Ingrese una descripción del producto" #input>
         <mat-icon matSuffix aria-hidden="false" fontIcon="search"></mat-icon>
       </mat-form-field>
@@ -28,7 +27,7 @@
       <mat-form-field appearance="outline">
         <mat-label>Búscar por categoría</mat-label>
         <input type="text"
-              placeholder="Escriba una categoría"
+              placeholder="Escriba una categoría para autocompletar"
               aria-label="Categorías"
               matInput
               name="categoria"
@@ -45,7 +44,7 @@
       <mat-form-field appearance="outline">
         <mat-label>Búscar por marca</mat-label>
         <input type="text"
-              placeholder="Escriba una marca"
+              placeholder="Escriba una marca para autocompletar"
               aria-label="Marcas"
               matInput
               name="marca"
@@ -66,7 +65,9 @@
         <mat-table [dataSource]="dataSource" matSort>
           <ng-container matColumnDef="index">
             <mat-header-cell *matHeaderCellDef> Item </mat-header-cell>
-            <mat-cell *matCellDef="let row; let i = index;">{{i+1}}</mat-cell>
+            <mat-cell *matCellDef="let row; let i = index;">
+              <img src="https://delfosti.com/wp-content/uploads/2022/06/Logo-secundario.png" class="img-fluid py-3 pr-4" title="Texto alternativo imagen {{i+1}}">
+            </mat-cell>
           </ng-container>
           <ng-container matColumnDef="name">
             <mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </mat-header-cell>
@@ -105,10 +106,10 @@
           <ng-container matColumnDef="actions">
             <mat-header-cell *matHeaderCellDef class="justify-content-center"> Acciones </mat-header-cell>
             <mat-cell *matCellDef="let row" class="justify-content-center">
-              <button mat-icon-button color="secondary" aria-label="Eliminar">
+              <button mat-icon-button color="secondary" aria-label="Eliminar" matTooltip="Eliminar producto" (click)="confirmarEliminacion(row._id)">
                 <mat-icon aria-hidden="false" fontIcon="delete"></mat-icon>
               </button>
-              <button mat-icon-button color="primary" aria-label="Editar">
+              <button mat-icon-button color="primary" aria-label="Editar" matTooltip="Editar producto" [routerLink]="'/nuevo-producto/editar/'+row._id" >
                 <mat-icon aria-hidden="false" fontIcon="edit"></mat-icon>
               </button>
             </mat-cell>
