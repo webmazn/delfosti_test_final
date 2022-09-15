@@ -19,22 +19,3 @@ export class ProductosService {
   }
 
 }
-
-  // carrito: any = []
-
-  // constructor(private http: HttpClient) { }
-
-  // getProductos(): Observable <any>{
-  //   return this.http.get(`${this.API_URI}/productos`);
-  // }
-
-  // setCarrito(carrito: any){
-  //   console.log('enviamos el carrito');
-  //   this.carrito = carrito;
-  //   console.log(this.carrito);
-  // }
-
-  // getCarrito(){
-  //   console.log('traemos el carrito');
-  //   console.log(this.carrito);
-  // }

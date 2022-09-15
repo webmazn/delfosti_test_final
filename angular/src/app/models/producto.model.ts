@@ -1,8 +1,12 @@
 export interface Producto{
   id?: string;
   name?: string;
-  category?: number;
-  brand?: number;
+  category?: {
+    name?: string;
+  };
+  brand?: {
+    name?: string;
+  };
   slug?: string;
   createdAt?: Date;
   status?: boolean;
